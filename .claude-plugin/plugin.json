@@ -1,0 +1,43 @@
+{
+  "name": "code-index-for-llms",
+  "version": "0.1.0",
+  "description": "Semantic code indexing and context retrieval for LLMs. Supports Terraform/HCL, Python, Go, TypeScript, Rust, Java, and more.",
+  "author": {
+    "name": "code-index-for-llms contributors"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/SessionStart.js",
+            "timeout": 10,
+            "statusMessage": "Checking code index..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/UserPromptSubmit.js",
+            "timeout": 8
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "code-index": {
+      "type": "stdio",
+      "command": "${CLAUDE_PLUGIN_ROOT}/bin/code-index",
+      "args": ["mcp", "serve"],
+      "env": {
+        "CODE_INDEX_ROOT": "${workspaceFolder}"
+      }
+    }
+  }
+}

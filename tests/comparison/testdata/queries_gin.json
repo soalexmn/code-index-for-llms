@@ -1,0 +1,225 @@
+{
+  "version": "1",
+  "description": "Ground-truth query set for the gin-gonic/gin comparison benchmark (v1.10.0). Chunk keys use format 'file_path::chunk_name'. Methods are named ReceiverType.MethodName.",
+  "queries": [
+    {
+      "id": "g01",
+      "text": "JSON render write response status code body",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.JSON", "grade": 2 }
+      ],
+      "notes": "JSON response helper on Context"
+    },
+    {
+      "id": "g02",
+      "text": "engine new default router create instance",
+      "category": "function_lookup",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "gin.go", "chunk_name": "New",     "grade": 2 },
+        { "file_path": "gin.go", "chunk_name": "Default", "grade": 2 },
+        { "file_path": "gin.go", "chunk_name": "Engine",  "grade": 1 }
+      ],
+      "notes": "gin.New and gin.Default constructors"
+    },
+    {
+      "id": "g03",
+      "text": "middleware use handler chain router group",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "routergroup.go", "chunk_name": "RouterGroup.Use",   "grade": 2 },
+        { "file_path": "routergroup.go", "chunk_name": "RouterGroup.Group", "grade": 1 }
+      ],
+      "notes": "RouterGroup.Use adds middleware; Group creates sub-group"
+    },
+    {
+      "id": "g04",
+      "text": "panic recovery middleware stack trace handler",
+      "category": "function_lookup",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "recovery.go", "chunk_name": "Recovery",       "grade": 2 },
+        { "file_path": "recovery.go", "chunk_name": "CustomRecovery", "grade": 1 }
+      ],
+      "notes": "Recovery middleware catches panics"
+    },
+    {
+      "id": "g05",
+      "text": "logger request response latency format time",
+      "category": "function_lookup",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "logger.go", "chunk_name": "Logger",             "grade": 2 },
+        { "file_path": "logger.go", "chunk_name": "LoggerWithConfig",   "grade": 1 },
+        { "file_path": "logger.go", "chunk_name": "LoggerConfig",       "grade": 1 }
+      ],
+      "notes": "Logger middleware and configuration struct"
+    },
+    {
+      "id": "g06",
+      "text": "basic auth credentials username password accounts",
+      "category": "function_lookup",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "auth.go", "chunk_name": "BasicAuth", "grade": 2 }
+      ],
+      "notes": "HTTP Basic authentication middleware"
+    },
+    {
+      "id": "g07",
+      "text": "bind request body JSON struct validate form",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.ShouldBind",     "grade": 2 },
+        { "file_path": "context.go", "chunk_name": "Context.ShouldBindJSON", "grade": 1 },
+        { "file_path": "context.go", "chunk_name": "Context.Bind",           "grade": 1 }
+      ],
+      "notes": "Request body binding and validation"
+    },
+    {
+      "id": "g08",
+      "text": "URL path parameter param wildcard named route",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.Param", "grade": 2 }
+      ],
+      "notes": "Named path parameter extraction from URL"
+    },
+    {
+      "id": "g09",
+      "text": "abort stop handler middleware chain status",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.Abort",           "grade": 2 },
+        { "file_path": "context.go", "chunk_name": "Context.AbortWithStatus", "grade": 1 }
+      ],
+      "notes": "Abort stops remaining handler chain"
+    },
+    {
+      "id": "g10",
+      "text": "GET POST PUT DELETE route HTTP method register",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "routergroup.go", "chunk_name": "RouterGroup.GET",    "grade": 2 },
+        { "file_path": "routergroup.go", "chunk_name": "RouterGroup.POST",   "grade": 2 },
+        { "file_path": "routergroup.go", "chunk_name": "RouterGroup.DELETE", "grade": 1 }
+      ],
+      "notes": "HTTP method route registration"
+    },
+    {
+      "id": "g11",
+      "text": "set cookie header secure httponly domain expire",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.SetCookie", "grade": 2 }
+      ],
+      "notes": "Set-Cookie response header helper"
+    },
+    {
+      "id": "g12",
+      "text": "redirect HTTP location URL permanent temporary",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.Redirect", "grade": 2 }
+      ],
+      "notes": "HTTP redirect response"
+    },
+    {
+      "id": "g13",
+      "text": "multipart form file upload open header",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.FormFile",     "grade": 2 },
+        { "file_path": "context.go", "chunk_name": "Context.MultipartForm", "grade": 1 }
+      ],
+      "notes": "File upload via multipart form"
+    },
+    {
+      "id": "g14",
+      "text": "ServeHTTP request response writer interface",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "gin.go", "chunk_name": "Engine.ServeHTTP", "grade": 2 }
+      ],
+      "notes": "Engine implements http.Handler"
+    },
+    {
+      "id": "g15",
+      "text": "radix tree node route insert conflict wildcard",
+      "category": "class_interface_lookup",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "tree.go", "chunk_name": "node",           "grade": 2 },
+        { "file_path": "tree.go", "chunk_name": "node.addRoute",  "grade": 1 }
+      ],
+      "notes": "Radix tree internals for route matching"
+    },
+    {
+      "id": "g16",
+      "text": "query string URL parameter get default value",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.Query",           "grade": 2 },
+        { "file_path": "context.go", "chunk_name": "Context.DefaultQuery",    "grade": 1 },
+        { "file_path": "context.go", "chunk_name": "Context.QueryMap",        "grade": 1 }
+      ],
+      "notes": "Query string parameter helpers"
+    },
+    {
+      "id": "g17",
+      "text": "run listen TCP address port server",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "gin.go", "chunk_name": "Engine.Run",    "grade": 2 },
+        { "file_path": "gin.go", "chunk_name": "Engine.RunTLS", "grade": 1 }
+      ],
+      "notes": "Engine.Run starts the HTTP server"
+    },
+    {
+      "id": "g18",
+      "text": "context keys store value set get",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.Set",    "grade": 2 },
+        { "file_path": "context.go", "chunk_name": "Context.Get",    "grade": 1 },
+        { "file_path": "context.go", "chunk_name": "Context.MustGet", "grade": 1 }
+      ],
+      "notes": "Context key-value store for passing data through middleware"
+    },
+    {
+      "id": "g19",
+      "text": "HTML template render name data",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.HTML", "grade": 2 }
+      ],
+      "notes": "HTML template rendering"
+    },
+    {
+      "id": "g20",
+      "text": "error handler add last error middleware",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "context.go", "chunk_name": "Context.Error",  "grade": 2 },
+        { "file_path": "errors.go",  "chunk_name": "Error",          "grade": 1 }
+      ],
+      "notes": "Error accumulation on Context"
+    }
+  ]
+}

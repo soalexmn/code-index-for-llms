@@ -1,0 +1,16 @@
+# Cloned test fixtures (large, downloaded on demand)
+tests/fixtures/gin/
+
+# Index databases
+.code-index/
+
+# Build output
+/code-index
+/code-index.exe
+bin/
+
+# Personal Claude settings
+.claude/
+
+# Generated benchmark output
+tests/comparison/output/

@@ -1,0 +1,44 @@
+# code-index project configuration
+# Copy to .code-index.yaml in your project root and customize.
+
+project:
+  name: my-project   # Defaults to directory name if omitted
+
+index:
+  include:
+    - "**/*"
+  exclude:
+    - ".git"
+    - "node_modules"
+    - "vendor"
+    - ".venv"
+    - "__pycache__"
+    - ".terraform"
+    - "dist"
+    - "build"
+    - ".code-index"
+  max_file_size_kb: 500
+  # Restrict to specific languages (empty = auto-detect all)
+  # languages: ["terraform", "python", "go"]
+
+embedding:
+  # Provider options: "none" (default, BM25 only), "openai", "ollama"
+  provider: "none"
+
+  # OpenAI example:
+  # provider: "openai"
+  # model: "text-embedding-3-small"
+  # api_key_env: "OPENAI_API_KEY"   # Name of env var holding the key
+
+  # Ollama example (local, free):
+  # provider: "ollama"
+  # model: "nomic-embed-text"
+  # base_url: "http://localhost:11434"
+  # dimensions: 768
+
+mcp:
+  max_results: 10
+  context_lines: 3
+
+storage:
+  path: ".code-index/index.db"  # Relative to project root

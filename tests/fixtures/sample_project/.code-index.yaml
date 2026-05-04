@@ -1,0 +1,18 @@
+project:
+  name: sample-project
+
+index:
+  exclude:
+    - ".git"
+    - ".code-index"
+    - "node_modules"
+    - "vendor"
+
+embedding:
+  provider: "none"
+
+mcp:
+  max_results: 10
+
+storage:
+  path: ".code-index/index.db"

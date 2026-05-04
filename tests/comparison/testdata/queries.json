@@ -1,0 +1,228 @@
+{
+  "version": "1",
+  "description": "Ground-truth query set for the code-index-for-llms comparison benchmark. Queries use keyword-style terms realistic for code search. Relevant chunk keys use format 'file_path::chunk_name' with forward-slash paths relative to the fixture root.",
+  "queries": [
+    {
+      "id": "q01",
+      "text": "JWT encode token HMAC signature",
+      "category": "function_lookup",
+      "language_hint": "python",
+      "relevant_chunks": [
+        { "file_path": "auth/jwt.py", "chunk_name": "encode_token", "grade": 2 }
+      ],
+      "notes": "keyword query targeting JWT encoding function"
+    },
+    {
+      "id": "q02",
+      "text": "exponential backoff retry delay attempts",
+      "category": "function_lookup",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "worker/retry.go", "chunk_name": "ExponentialBackoff", "grade": 2 },
+        { "file_path": "worker/retry.go", "chunk_name": "RetryPolicy",        "grade": 1 },
+        { "file_path": "worker/retry.go", "chunk_name": "ShouldRetry",        "grade": 1 }
+      ],
+      "notes": "Go retry logic with exponential backoff"
+    },
+    {
+      "id": "q03",
+      "text": "email validation regex pattern",
+      "category": "function_lookup",
+      "language_hint": "python",
+      "relevant_chunks": [
+        { "file_path": "api/models.py", "chunk_name": "validate_email", "grade": 2 }
+      ],
+      "notes": "email format validation utility"
+    },
+    {
+      "id": "q04",
+      "text": "decode verify JWT token signature expired",
+      "category": "function_lookup",
+      "language_hint": "python",
+      "relevant_chunks": [
+        { "file_path": "auth/jwt.py", "chunk_name": "decode_token",     "grade": 2 },
+        { "file_path": "auth/jwt.py", "chunk_name": "InvalidTokenError", "grade": 1 },
+        { "file_path": "auth/jwt.py", "chunk_name": "TokenExpiredError", "grade": 1 }
+      ],
+      "notes": "JWT decode and verification with exception types"
+    },
+    {
+      "id": "q05",
+      "text": "permission check role access control",
+      "category": "function_lookup",
+      "language_hint": "python",
+      "relevant_chunks": [
+        { "file_path": "auth/permissions.py", "chunk_name": "has_permission",    "grade": 2 },
+        { "file_path": "auth/permissions.py", "chunk_name": "PermissionChecker", "grade": 1 }
+      ],
+      "notes": "role-based permission checker"
+    },
+    {
+      "id": "q06",
+      "text": "ApiResponse generic interface data error status",
+      "category": "class_interface_lookup",
+      "language_hint": "typescript",
+      "relevant_chunks": [
+        { "file_path": "frontend/types/models.ts", "chunk_name": "ApiResponse", "grade": 2 }
+      ],
+      "notes": "generic TypeScript response interface"
+    },
+    {
+      "id": "q07",
+      "text": "User model email role dataclass struct",
+      "category": "class_interface_lookup",
+      "language_hint": null,
+      "relevant_chunks": [
+        { "file_path": "api/models.py",            "chunk_name": "User", "grade": 2 },
+        { "file_path": "frontend/types/models.ts", "chunk_name": "User", "grade": 2 },
+        { "file_path": "storage/user_repo.go",     "chunk_name": "User", "grade": 1 }
+      ],
+      "notes": "cross-language user data model"
+    },
+    {
+      "id": "q08",
+      "text": "ApiClient HTTP fetch bearer token authorization",
+      "category": "class_interface_lookup",
+      "language_hint": "typescript",
+      "relevant_chunks": [
+        { "file_path": "frontend/services/api.ts", "chunk_name": "ApiClient", "grade": 2 }
+      ],
+      "notes": "TypeScript API client wrapping fetch"
+    },
+    {
+      "id": "q09",
+      "text": "TokenExpiredError exception class JWT",
+      "category": "class_interface_lookup",
+      "language_hint": "python",
+      "relevant_chunks": [
+        { "file_path": "auth/jwt.py", "chunk_name": "TokenExpiredError", "grade": 2 },
+        { "file_path": "auth/jwt.py", "chunk_name": "InvalidTokenError", "grade": 1 }
+      ],
+      "notes": "JWT exception classes"
+    },
+    {
+      "id": "q10",
+      "text": "aws_s3_bucket logs storage tags",
+      "category": "iac_resource_lookup",
+      "language_hint": "terraform",
+      "relevant_chunks": [
+        { "file_path": "infra/main.tf", "chunk_name": "aws_s3_bucket.logs",   "grade": 2 },
+        { "file_path": "infra/main.tf", "chunk_name": "aws_s3_bucket.assets", "grade": 1 }
+      ],
+      "notes": "S3 bucket terraform resource"
+    },
+    {
+      "id": "q11",
+      "text": "aws_vpc cidr subnet availability zone",
+      "category": "iac_resource_lookup",
+      "language_hint": "terraform",
+      "relevant_chunks": [
+        { "file_path": "infra/networking.tf", "chunk_name": "aws_vpc.main",        "grade": 2 },
+        { "file_path": "infra/networking.tf", "chunk_name": "aws_subnet.public_a", "grade": 1 },
+        { "file_path": "infra/networking.tf", "chunk_name": "aws_subnet.public_b", "grade": 1 }
+      ],
+      "notes": "VPC and subnet terraform resources"
+    },
+    {
+      "id": "q12",
+      "text": "aws_iam_role lambda execution assume_role_policy",
+      "category": "iac_resource_lookup",
+      "language_hint": "terraform",
+      "relevant_chunks": [
+        { "file_path": "infra/iam.tf", "chunk_name": "aws_iam_role.lambda_exec",                "grade": 2 },
+        { "file_path": "infra/iam.tf", "chunk_name": "aws_iam_role_policy_attachment.lambda_s3", "grade": 1 }
+      ],
+      "notes": "IAM role and policy attachment"
+    },
+    {
+      "id": "q13",
+      "text": "FindByEmail UserRepository database query",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "storage/user_repo.go", "chunk_name": "FindByEmail",    "grade": 2 },
+        { "file_path": "storage/user_repo.go", "chunk_name": "UserRepository", "grade": 1 }
+      ],
+      "notes": "repository method for email lookup"
+    },
+    {
+      "id": "q14",
+      "text": "Enqueue JobQueue capacity error channel",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "worker/queue.go", "chunk_name": "Enqueue",  "grade": 2 },
+        { "file_path": "worker/queue.go", "chunk_name": "JobQueue", "grade": 1 }
+      ],
+      "notes": "queue enqueue method"
+    },
+    {
+      "id": "q15",
+      "text": "processJob worker panic recover handler",
+      "category": "method_on_type",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "worker/worker.go", "chunk_name": "processJob", "grade": 2 },
+        { "file_path": "worker/worker.go", "chunk_name": "Worker",     "grade": 1 }
+      ],
+      "notes": "job processing method with panic recovery"
+    },
+    {
+      "id": "q16",
+      "text": "login logout AuthService token localStorage",
+      "category": "cross_language_concept",
+      "language_hint": null,
+      "relevant_chunks": [
+        { "file_path": "frontend/services/auth.ts", "chunk_name": "AuthService",   "grade": 2 },
+        { "file_path": "frontend/services/auth.ts", "chunk_name": "login",         "grade": 2 },
+        { "file_path": "api/server.py",             "chunk_name": "AuthMiddleware", "grade": 1 }
+      ],
+      "notes": "auth service and middleware"
+    },
+    {
+      "id": "q17",
+      "text": "create_user handler validation service repository",
+      "category": "cross_language_concept",
+      "language_hint": null,
+      "relevant_chunks": [
+        { "file_path": "api/handlers.py",      "chunk_name": "create_user",       "grade": 2 },
+        { "file_path": "storage/user_repo.go", "chunk_name": "Save",              "grade": 1 },
+        { "file_path": "api/models.py",        "chunk_name": "CreateUserRequest", "grade": 1 }
+      ],
+      "notes": "user creation across layers"
+    },
+    {
+      "id": "q18",
+      "text": "RetryPolicy MaxAttempts BaseDelay constructor",
+      "category": "cross_language_concept",
+      "language_hint": "go",
+      "relevant_chunks": [
+        { "file_path": "worker/retry.go", "chunk_name": "RetryPolicy",    "grade": 2 },
+        { "file_path": "worker/retry.go", "chunk_name": "NewRetryPolicy", "grade": 1 }
+      ],
+      "notes": "retry policy struct and constructor"
+    },
+    {
+      "id": "q19",
+      "text": "db_password sensitive variable RDS postgres",
+      "category": "configuration",
+      "language_hint": "terraform",
+      "relevant_chunks": [
+        { "file_path": "infra/variables.tf", "chunk_name": "db_password",          "grade": 2 },
+        { "file_path": "infra/database.tf",  "chunk_name": "aws_db_instance.primary", "grade": 1 }
+      ],
+      "notes": "sensitive database password variable"
+    },
+    {
+      "id": "q20",
+      "text": "aws_autoscaling_group launch_template desired_capacity",
+      "category": "configuration",
+      "language_hint": "terraform",
+      "relevant_chunks": [
+        { "file_path": "infra/compute.tf", "chunk_name": "aws_autoscaling_group.api", "grade": 2 },
+        { "file_path": "infra/compute.tf", "chunk_name": "aws_launch_template.api",   "grade": 2 }
+      ],
+      "notes": "autoscaling and launch template resources"
+    }
+  ]
+}
