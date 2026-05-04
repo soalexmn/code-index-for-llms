@@ -9,6 +9,67 @@ Semantic code indexing for LLMs. Parses your codebase into structured chunks, st
 
 ---
 
+## Install as Claude plugin
+
+### Option A — Claude plugin marketplace (recommended)
+
+Add the marketplace entry to `~/.claude/settings.json`:
+
+```jsonc
+{
+  "extraKnownMarketplaces": {
+    "code-index": {
+      "source": { "source": "github", "repo": "soalexmn/code-index-for-llms" }
+    }
+  }
+}
+```
+
+Then inside Claude Code:
+
+```
+/install code-index@code-index
+```
+
+Claude Code will download the correct binary for your platform automatically and register the MCP server. Open a new session and run `/index` to index your project.
+
+### Option B — Manual MCP configuration
+
+1. Download the binary for your platform from [Releases](https://github.com/soalexmn/code-index-for-llms/releases/latest):
+
+   | Platform      | Binary                          |
+   | ------------- | ------------------------------- |
+   | macOS (Apple) | `code-index-darwin-arm64`       |
+   | macOS (Intel) | `code-index-darwin-amd64`       |
+   | Linux x86-64  | `code-index-linux-amd64`        |
+   | Linux ARM64   | `code-index-linux-arm64`        |
+   | Windows       | `code-index-windows-amd64.exe`  |
+
+2. Make it executable (macOS/Linux): `chmod +x code-index-*`
+
+3. Add to `~/.claude/settings.json`:
+
+```jsonc
+{
+  "mcpServers": {
+    "code-index": {
+      "type": "stdio",
+      "command": "/path/to/code-index",
+      "args": ["mcp", "serve"],
+      "env": { "CODE_INDEX_ROOT": "/path/to/your/project" }
+    }
+  }
+}
+```
+
+4. Restart Claude Code and run `index_project` via the MCP tools panel, or use the CLI:
+
+```bash
+code-index index /path/to/your/project
+```
+
+---
+
 ## Benchmark
 
 Measured on a synthetic multi-language project (20 files, Python / Go / TypeScript / Terraform) with 20 ground-truth queries across function lookup, class lookup, IaC resource lookup, and cross-language concepts.
@@ -107,26 +168,9 @@ Default provider is `none` - BM25-only search with zero configuration. Enable ve
 
 ---
 
-## Claude CLI plugin
+## Claude plugin features
 
-Install as a Claude CLI plugin for automatic code context injection:
-
-```jsonc
-// ~/.claude/settings.json - register the marketplace
-{
-  "extraKnownMarketplaces": {
-    "code-index": {
-      "source": { "source": "github", "repo": "YOUR_ORG/code-index-for-llms" },
-    },
-  },
-}
-```
-
-```
-/install code-index@code-index
-```
-
-After install:
+After installing via either method above:
 
 - **SessionStart** - detects existing index, injects stats or suggests `/index`
 - **UserPromptSubmit** - auto-prepends top-3 search results as `<code_context>` before each prompt
