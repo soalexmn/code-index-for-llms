@@ -27,7 +27,7 @@ for target in "${TARGETS[@]}"; do
   NAME="code-index-${OS}-${ARCH}${EXT}"
   echo "Building $NAME..."
 
-  CGO_ENABLED=1 GOOS="$OS" GOARCH="$ARCH" go build \
+  CGO_ENABLED=0 GOOS="$OS" GOARCH="$ARCH" go build \
     -ldflags="-X main.version=${VERSION}" \
     -o "${OUT_DIR}/${NAME}" \
     "$PACKAGE"

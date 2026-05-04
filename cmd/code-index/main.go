@@ -20,6 +20,8 @@ import (
 	"github.com/code-index-for-llms/code-index/internal/watcher"
 )
 
+var version = "dev" // overridden by -ldflags "-X main.version=v1.2.3" at build time
+
 func main() {
 	if len(os.Args) < 2 {
 		printUsage()
@@ -34,7 +36,7 @@ func main() {
 	case "search":
 		runSearch(os.Args[2:])
 	case "version":
-		fmt.Println("code-index v0.1.0")
+		fmt.Println("code-index", version)
 	default:
 		printUsage()
 		os.Exit(1)

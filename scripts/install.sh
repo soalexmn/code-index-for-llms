@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-REPO="YOUR_ORG/code-index-for-llms"
+REPO="soalexmn/code-index-for-llms"
 VERSION="${CODE_INDEX_VERSION:-latest}"
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 BIN_DIR="$PLUGIN_ROOT/bin"

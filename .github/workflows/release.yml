@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build binaries (all platforms)
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          mkdir -p bin
+
+          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do
+            OS="${target%/*}"
+            ARCH="${target#*/}"
+            EXT=""
+            [ "$OS" = "windows" ] && EXT=".exe"
+
+            echo "Building code-index-${OS}-${ARCH}${EXT}..."
+            CGO_ENABLED=0 GOOS="$OS" GOARCH="$ARCH" go build \
+              -ldflags="-s -w -X main.version=${VERSION}" \
+              -o "bin/code-index-${OS}-${ARCH}${EXT}" \
+              ./cmd/code-index
+          done
+
+          ls -lh bin/
+
+      - name: Build plugin zip
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          STAGING="plugin-staging"
+          mkdir -p "$STAGING/bin" "$STAGING/hooks" "$STAGING/skills" "$STAGING/scripts"
+
+          cp .claude-plugin/plugin.json "$STAGING/plugin.json"
+          cp hooks/SessionStart.js hooks/UserPromptSubmit.js "$STAGING/hooks/"
+          cp skills/*.md "$STAGING/skills/"
+          cp scripts/install.sh "$STAGING/scripts/"
+
+          # Patch version into plugin.json
+          sed -i "s/\"version\": \".*\"/\"version\": \"${VERSION}\"/" "$STAGING/plugin.json"
+
+          (cd "$STAGING" && zip -r "../bin/code-index-plugin-${VERSION}.zip" .)
+          echo "Plugin zip: $(du -h "bin/code-index-plugin-${VERSION}.zip" | cut -f1)"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: bin/*
+          generate_release_notes: true
