@@ -217,17 +217,13 @@ func runOneQuery(r runners.Runner, q Query, cfg Config) QueryMetrics {
 	// Build normalised relevance set (lower-case file paths for case-insensitive match).
 	rs := BuildRelevanceSet(q.RelevantChunks)
 
-	// Extract normalised keys from results.
-	keys := make([]string, len(results))
-	for i, res := range results {
-		keys[i] = NormalizeKey(res)
-	}
-
-	qm.RecallAt3 = recallAtKKeys(keys, rs, 3)
-	qm.RecallAt5 = recallAtKKeys(keys, rs, 5)
-	qm.RecallAt10 = recallAtKKeys(keys, rs, cfg.TopK)
-	qm.MRR = mrrKeys(keys, rs)
-	qm.NDCGAt10 = ndcgAtKKeys(keys, rs, cfg.TopK)
+	// Result-based metrics: FILE-type chunks (baseline) match any relevant chunk
+	// in the same file, so baseline correctly scores ~1.0 recall.
+	qm.RecallAt3 = recallAtKResults(results, rs, 3)
+	qm.RecallAt5 = recallAtKResults(results, rs, 5)
+	qm.RecallAt10 = recallAtKResults(results, rs, cfg.TopK)
+	qm.MRR = mrrResults(results, rs)
+	qm.NDCGAt10 = ndcgAtKResults(results, rs, cfg.TopK)
 	qm.ContextTokens = r.ContextTokens(results)
 	qm.OutputTokens = r.OutputTokensEstimate(cfg.BaselineOutputTokensEst)
 
@@ -246,8 +242,117 @@ func runOneQuery(r runners.Runner, q Query, cfg Config) QueryMetrics {
 	return qm
 }
 
-// ─── metric helpers (key-based, type-free) ────────────────────────────────────
+// ─── metric helpers ───────────────────────────────────────────────────────────
 
+// fileRelevanceSet maps lower-cased file paths to the max relevance grade of
+// any relevant chunk in that file. Used for file-level result matching.
+func fileRelevanceSet(rs RelevanceSet) map[string]int {
+	fm := make(map[string]int, len(rs))
+	for key, grade := range rs {
+		if i := strings.Index(key, "::"); i >= 0 {
+			fp := key[:i]
+			if grade > fm[fp] {
+				fm[fp] = grade
+			}
+		}
+	}
+	return fm
+}
+
+// resultGrade returns the relevance grade for a single search result.
+// FILE-type chunks match any relevant chunk in the same file (using max grade).
+func resultGrade(res types.SearchResult, rs RelevanceSet, frs map[string]int) float64 {
+	if res.Chunk.ChunkType == types.ChunkTypeFile {
+		fp := strings.ToLower(res.Chunk.FilePath)
+		return float64(frs[fp])
+	}
+	return float64(rs[NormalizeKey(res)])
+}
+
+func recallAtKResults(results []types.SearchResult, rs RelevanceSet, k int) float64 {
+	if len(rs) == 0 {
+		return 1.0
+	}
+	found := map[string]bool{}
+	for i, res := range results {
+		isFile := res.Chunk.ChunkType == types.ChunkTypeFile
+		// FILE-type results (baseline) carry the entire file regardless of rank:
+		// the LLM receives all of them so the k cutoff does not apply.
+		if !isFile && i >= k {
+			break
+		}
+		if isFile {
+			fp := strings.ToLower(res.Chunk.FilePath)
+			for rk := range rs {
+				if strings.HasPrefix(rk, fp+"::") {
+					found[rk] = true
+				}
+			}
+		} else {
+			key := NormalizeKey(res)
+			if _, ok := rs[key]; ok {
+				found[key] = true
+			}
+		}
+	}
+	return float64(len(found)) / float64(len(rs))
+}
+
+func mrrResults(results []types.SearchResult, rs RelevanceSet) float64 {
+	frs := fileRelevanceSet(rs)
+	// For FILE-type runners (baseline): all files are in context, so if any
+	// relevant file exists in results, MRR = 1.0 (rank is irrelevant).
+	allFile := len(results) > 0 && results[0].Chunk.ChunkType == types.ChunkTypeFile
+	if allFile {
+		for _, res := range results {
+			fp := strings.ToLower(res.Chunk.FilePath)
+			if frs[fp] > 0 {
+				return 1.0
+			}
+		}
+		return 0.0
+	}
+	for i, res := range results {
+		if resultGrade(res, rs, frs) > 0 {
+			return 1.0 / float64(i+1)
+		}
+	}
+	return 0.0
+}
+
+func ndcgAtKResults(results []types.SearchResult, rs RelevanceSet, k int) float64 {
+	if k > len(results) {
+		k = len(results)
+	}
+	frs := fileRelevanceSet(rs)
+	dcg := 0.0
+	for i := 0; i < k; i++ {
+		grade := resultGrade(results[i], rs, frs)
+		if grade > 0 {
+			dcg += grade / math.Log2(float64(i+2))
+		}
+	}
+	// Ideal DCG: sorted grades descending.
+	grades := make([]float64, 0, len(rs))
+	for _, g := range rs {
+		grades = append(grades, float64(g))
+	}
+	for i := 1; i < len(grades); i++ {
+		for j := i; j > 0 && grades[j] > grades[j-1]; j-- {
+			grades[j], grades[j-1] = grades[j-1], grades[j]
+		}
+	}
+	idcg := 0.0
+	for i := 0; i < k && i < len(grades); i++ {
+		idcg += grades[i] / math.Log2(float64(i+2))
+	}
+	if idcg == 0 {
+		return 0
+	}
+	return dcg / idcg
+}
+
+// key-based variants kept for TestMetrics unit tests.
 func recallAtKKeys(keys []string, relevant RelevanceSet, k int) float64 {
 	if len(relevant) == 0 {
 		return 1.0
@@ -284,7 +389,6 @@ func ndcgAtKKeys(keys []string, relevant RelevanceSet, k int) float64 {
 			dcg += grade / math.Log2(float64(i+2))
 		}
 	}
-	// Ideal DCG: sorted grades descending.
 	grades := make([]float64, 0, len(relevant))
 	for _, g := range relevant {
 		grades = append(grades, float64(g))

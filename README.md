@@ -76,16 +76,17 @@ Measured on a synthetic multi-language project (20 files, Python / Go / TypeScri
 
 | Approach                          | Recall@10 | MRR      | Avg context tokens | Token reduction |
 | --------------------------------- | --------- | -------- | ------------------ | --------------- |
-| No plugin (full codebase)         | 0.00      | 0.00     | 9,862              | -               |
-| Caveman (output compression only) | 0.00      | 0.00     | 9,862              | 0%              |
-| code-context-engine (CCE)         | 0.37      | 0.39     | 1,453              | 85%             |
+| No plugin (full codebase)         | 1.00      | 1.00     | 9,862              | -               |
+| Caveman (output compression only) | 1.00      | 1.00     | 9,862              | 0%              |
+| code-context-engine (CCE)         | 0.50      | 0.52     | 1,323              | 87%             |
 | **code-index-for-llms (this)**    | **0.83**  | **0.72** | **801**            | **92%**         |
 
 - **Recall@10**: fraction of relevant chunks appearing in top-10 results (higher is better)
 - **MRR**: mean reciprocal rank of the first relevant result (higher is better)
 - **Token reduction**: `(baseline_tokens − runner_tokens) / baseline_tokens`
-- Baseline recall is 0 because it returns whole files, not named chunks - the LLM sees all code but the retrieval system cannot match function-level ground truth
-- CCE recall is lower due to coarser chunking (whole classes / whole files vs individual functions and resources)
+- Baseline recall is 1.0 because the full codebase is always in context; the cost is in tokens (9,862 avg)
+- code-index-for-llms achieves 83% recall at 92% fewer tokens than baseline
+- CCE recall is lower due to coarser chunking (whole classes/files vs individual functions)
 - Reproduce: `go test ./tests/comparison/... -v -timeout 15m`
 
 ---
