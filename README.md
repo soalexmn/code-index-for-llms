@@ -72,22 +72,39 @@ code-index index /path/to/your/project
 
 ## Benchmark
 
-Measured on a synthetic multi-language project (20 files, Python / Go / TypeScript / Terraform) with 20 ground-truth queries across function lookup, class lookup, IaC resource lookup, and cross-language concepts.
+Two fixtures: a synthetic multi-language project and a real-world Go codebase (gin-gonic/gin v1.10.0).
+
+### Synthetic project (sample_project)
+
+20 files — Python, Go, TypeScript, Terraform. 20 ground-truth queries across function lookup, class lookup, IaC resource lookup, and cross-language concepts.
 
 | Approach                          | Recall@10 | MRR      | Avg context tokens | Token reduction |
 | --------------------------------- | --------- | -------- | ------------------ | --------------- |
-| No plugin (full codebase)         | 1.00      | 1.00     | 9,862              | -               |
-| Caveman (output compression only) | 1.00      | 1.00     | 9,862              | 0%              |
+| No plugin (full codebase)         | 1.00      | 1.00     | 9,862              | —               |
 | code-context-engine (CCE)         | 0.50      | 0.52     | 1,323              | 87%             |
 | **code-index-for-llms (this)**    | **0.83**  | **0.72** | **801**            | **92%**         |
 
-- **Recall@10**: fraction of relevant chunks appearing in top-10 results (higher is better)
+CCE terraform queries excluded from CCE aggregate (CCE does not parse Terraform); CIL aggregate includes all 20 queries.
+
+### Real-world project (gin-gonic/gin v1.10.0)
+
+~90 Go source files, ~15k LOC. 20 ground-truth queries targeting real gin constructs: `Context.JSON`, `Engine.Run`, `RouterGroup.Use`, `Recovery`, `BasicAuth`, etc.
+
+| Approach                       | Recall@10 | MRR      | Avg context tokens | Token reduction |
+| ------------------------------ | --------- | -------- | ------------------ | --------------- |
+| No plugin (full codebase)      | 1.00      | 1.00     | 191,253            | —               |
+| code-context-engine (CCE)      | 0.15      | 0.08     | 2,646              | 99%             |
+| **code-index-for-llms (this)** | **0.44**  | **0.32** | **1,970**          | **99%**         |
+
+Lower recall on gin reflects BM25 limitations with camelCase method names (`Context.JSON`, `Engine.ServeHTTP`). Adding vector/embedding search would close this gap significantly.
+
+### Notes
+
+- **Recall@10**: fraction of relevant chunks found in top-10 results (higher is better)
 - **MRR**: mean reciprocal rank of the first relevant result (higher is better)
 - **Token reduction**: `(baseline_tokens − runner_tokens) / baseline_tokens`
-- Baseline recall is 1.0 because the full codebase is always in context; the cost is in tokens (9,862 avg)
-- code-index-for-llms achieves 83% recall at 92% fewer tokens than baseline
-- CCE recall is lower due to coarser chunking (whole classes/files vs individual functions)
-- Reproduce: `go test ./tests/comparison/... -v -timeout 15m`
+- Baseline recall is 1.0 because the full codebase is always in context; the cost is tokens
+- Reproduce: `go test ./tests/comparison/... -v -timeout 5m` (sample) · `go test ./tests/comparison/... -run TestComparisonGin -v -timeout 15m` (gin, clones on first run)
 
 ---
 
